@@ -62,7 +62,7 @@ router.use("/", async (req,res,next) => {
         let value = urlObj[currUrl];
         urlObj[currUrl] = value + 1;
     }
-    console.log("URL: " + urlObj);
+    console.log("URL: " + JSON.stringify(urlObj));
     next();
 })
 
