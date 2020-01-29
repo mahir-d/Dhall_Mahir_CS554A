@@ -45,6 +45,11 @@ async function showComments(taskToRtrn) {
     return objToRtrn;
 }
 
+
+router.use("/", async (req, res,next) => {
+    console.log(`${JSON.stringify(req.body)} ${req.url} ${req.method}`);
+    next();
+})
 /**
  * To Create a new task with given details in the body
  */

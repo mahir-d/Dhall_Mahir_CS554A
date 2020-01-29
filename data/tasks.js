@@ -1,6 +1,6 @@
 const collections = require('./collections');
 const tasksData = collections.tasks;
-var ObjectID = require("mongodb").ObjectID;
+var ObjectID = require("mongodb", { useUnifiedTopology: true }).ObjectID;
 var commentData = require('./comments');
 
 
@@ -36,51 +36,52 @@ async function deleteComment(taskId, commentId) {
             taskId = ObjectID.createFromHexString(taskId);
         } catch (e) {
             throw `Error : ${taskId} is not a vaild ObjectId`
-        }}
-    
+        }
+    }
+
     taskId = await ObjectID(taskId);
-    if (!ObjectID.isValid(taskId)) { 
+    if (!ObjectID.isValid(taskId)) {
         throw 'Error: taskId is not of valid ObjectId type';
     }
-    
+
     // commentId = await ObjectID(commentId);
     // if (!ObjectID.isValid(commentId)) {
     //     throw 'Error: commentId needs to be of valid ObjectId type';
     // }
 
     const currTask = await getTaskById(taskId);
-    if (!currTask) { 
+    if (!currTask) {
         throw `task with the given id ${taskId} does not exists`
     }
-    
+
     try {
         commentId = ObjectID.createFromHexString(commentId);
     } catch (e) {
         throw `Error : ${taskId} is not a vaild ObjectId`
     }
     commentId = ObjectID(commentId);
-    if (!ObjectID.isValid(commentId)) { 
+    if (!ObjectID.isValid(commentId)) {
         throw 'Error: commentId should be of valid ObjectId type';
     }
     /////
     const taskCollection = await getTasksCollections();
     let commentFound = await taskCollection.findOne({ comments: commentId });
 
-    if (!commentFound) { 
+    if (!commentFound) {
         throw `comment with id ${commentId} does not exists`;
     }
 
     const dltStatus = await commentData.dltComment(commentId);
 
-    if (!dltStatus) { 
+    if (!dltStatus) {
         throw 'Error: comment could not be deleted';
     }
-    
+
     const status = await taskCollection.updateOne({ _id: taskId }, { $pull: { comments: commentId } });
     if (status.modifiedCount > 0) {
         return await getTaskById(taskId);
     }
-    else { 
+    else {
         throw 'end of function, comment could not be deleted'
     }
 }
@@ -185,7 +186,7 @@ async function getAll(n, y) {
         const tasksToRtrn = await tasksCollection.find({}).limit(y).toArray();
         return tasksToRtrn;
     }
-    
+
     const tasksToRtrn = await tasksCollection.find({}).toArray();
     return tasksToRtrn;
 }
@@ -196,14 +197,14 @@ async function getAll(n, y) {
  */
 async function getTaskById(id) {
     const taskCollection = await getTasksCollections();
-    if (!ObjectID.isValid(id)) { 
+    if (!ObjectID.isValid(id)) {
         try {
             id = ObjectID.createFromHexString(id);
         } catch (e) {
             throw `Error : ${id} is not a vaild ObjectId`
         }
     }
-    
+
     id = ObjectID(id)
     if (!ObjectID.isValid(id)) {
         throw "Error: id provided is not a valid ObjectID";
@@ -255,8 +256,8 @@ async function create(title, description, hoursEstimated) {
     return newCreatedTask;
 }
 
-async function patchTask(id, newObj) { 
-    
+async function patchTask(id, newObj) {
+
     if (!ObjectID.isValid(id)) {
         try {
             id = ObjectID.createFromHexString(id);
@@ -268,7 +269,7 @@ async function patchTask(id, newObj) {
 
     let taskCollection = await getTasksCollections();
     let currTask = await taskCollection.findOne({ _id: id });
-    if (!currTask) { 
+    if (!currTask) {
         throw `task with id ${id} could not be found in the database`;
     }
     let taskComments = currTask.comments;
@@ -281,31 +282,31 @@ async function patchTask(id, newObj) {
     }
 
 
-    if (newObj.title) { 
-        if (!checkString(newObj.title)) { 
+    if (newObj.title) {
+        if (!checkString(newObj.title)) {
             throw `title should be of type string and non-empty`;
         }
         objToUpdate.title = newObj.title;
     }
-    if (newObj.description) { 
-        if (!checkString(newObj.description)) { 
+    if (newObj.description) {
+        if (!checkString(newObj.description)) {
             throw `description should be of type string and non empty`;
         }
         objToUpdate.description = newObj.description;
     }
-    if (newObj.hoursEstimated) { 
-        if (!checkNumer(newObj.hoursEstimated)) { 
+    if (newObj.hoursEstimated) {
+        if (!checkNumer(newObj.hoursEstimated)) {
             throw `hoursEstimated should be of type number`;
         }
         objToUpdate.hoursEstimated = newObj.hoursEstimated;
     }
-    if (newObj.completed !== undefined) { 
-        if (typeof newObj.completed != 'boolean') { 
+    if (newObj.completed !== undefined) {
+        if (typeof newObj.completed != 'boolean') {
             throw `completed should be of type boolean`;
         }
         objToUpdate.completed = newObj.completed;
     }
-    if (newObj.comments) { 
+    if (newObj.comments) {
         throw `comments cannot be updated in this route`;
     }
 
@@ -318,4 +319,4 @@ async function patchTask(id, newObj) {
     }
 };
 
-module.exports = { create, getTaskById, getAll, updateTask, addComment, deleteComment, patchTask};
+module.exports = { create, getTaskById, getAll, updateTask, addComment, deleteComment, patchTask };
