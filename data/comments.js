@@ -1,6 +1,6 @@
 const collections = require('./collections');
 const comments = collections.comments
-var ObjectID = require("mongodb").ObjectID; 
+var ObjectID = require("mongodb", { useUnifiedTopology: true }).ObjectID; 
 
 async function getCommentsCollections(){
     return await comments();

@@ -1,4 +1,4 @@
-const MongoClient = require("mongodb").MongoClient;
+const MongoClient = require("mongodb", { useUnifiedTopology: true }).MongoClient;
 
 const mongoConfig = {
   serverUrl: "mongodb://localhost:27017/",

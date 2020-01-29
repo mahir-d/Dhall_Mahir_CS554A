@@ -4,9 +4,10 @@ const data = require("../data/tasks");
 const commentData = require('../data/comments');
 
 
-/* 
-    To display comments in proper format
-*/
+/**
+ * To display comments of the given task in a proper format
+ * @param {the task object to return } taskToRtrn 
+ */
 async function showComments(taskToRtrn) {
 
     let lsComments = taskToRtrn.comments;
@@ -46,10 +47,25 @@ async function showComments(taskToRtrn) {
 }
 
 
-router.use("/", async (req, res,next) => {
+var urlObj = {};
+/**
+ * Middleware logger
+ */
+router.use("/", async (req,res,next) => {
+    
     console.log(`${JSON.stringify(req.body)} ${req.url} ${req.method}`);
+    let currUrl = req.url;
+    if (!urlObj[currUrl]) {
+        urlObj[currUrl] = 1;
+    }
+    else { 
+        let value = urlObj[currUrl];
+        urlObj[currUrl] = value + 1;
+    }
+    console.log("URL: " + urlObj);
     next();
 })
+
 /**
  * To Create a new task with given details in the body
  */
