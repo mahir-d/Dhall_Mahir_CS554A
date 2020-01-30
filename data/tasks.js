@@ -179,7 +179,7 @@ async function getAll(n, y) {
         return tasksToRtrn;
     }
     if (n != undefined) {
-        const tasksToRtrn = await tasksCollection.find({}).skip(n).toArray();
+        const tasksToRtrn = await tasksCollection.find({}).skip(n).limit(20).toArray();
         return tasksToRtrn;
     }
     if (y != undefined) {

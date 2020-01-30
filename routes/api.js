@@ -51,14 +51,14 @@ var urlObj = {};
 /**
  * Middleware logger
  */
-router.use("/", async (req,res,next) => {
-    
+router.use("/", async (req, res, next) => {
+
     console.log(`${JSON.stringify(req.body)} ${req.url} ${req.method}`);
     let currUrl = req.url;
     if (!urlObj[currUrl]) {
         urlObj[currUrl] = 1;
     }
-    else { 
+    else {
         let value = urlObj[currUrl];
         urlObj[currUrl] = value + 1;
     }
@@ -131,10 +131,26 @@ router.get("/tasks", async (req, res) => {
             if (isNaN(s)) {
                 throw 'Skip number should be an Integer'
             }
+            if (typeof s != 'number' && !Number.isInteger(s)) {
+                throw 'query skip  should be of type number';
+            }
+            if (s < 0) {
+                throw 'query skip  should be a positive number';
+            }
             var t = parseInt(req.query.take);
             if (isNaN(t)) {
                 throw 'take number should be an Integer'
             }
+            if (typeof t != 'number' && !Number.isInteger(t)) {
+                throw 'query take should be of type number';
+            }
+            if (t < 0) {
+                throw 'query take should be a positive number';
+            }
+            if (t > 100) {
+                t = 100;
+            }
+
             const allTaskData = await data.getAll(s, t);
 
             let taskArrayToRtrn = []
@@ -156,6 +172,15 @@ router.get("/tasks", async (req, res) => {
             var t = parseInt(req.query.take);
             if (isNaN(t)) {
                 throw 'take number should be an Integer'
+            }
+            if (typeof t != 'number' && !Number.isInteger(t)) {
+                throw 'query take should be of type number';
+            }
+            if (t < 0) {
+                throw 'query take should be a positive number';
+            }
+            if (t > 100) {
+                t = 100;
             }
 
             const allTaskData = await data.getAll(s, t);
@@ -180,6 +205,12 @@ router.get("/tasks", async (req, res) => {
             var s = parseInt(req.query.skip);
             if (isNaN(s)) {
                 throw 'skip number should be an Integer'
+            }
+            if (typeof s != 'number' && !Number.isInteger(s)) {
+                throw 'query skip  should be of type number';
+            }
+            if (s < 0) {
+                throw 'query skip  should be a positive number';
             }
 
             const allTaskData = await data.getAll(s, t);
